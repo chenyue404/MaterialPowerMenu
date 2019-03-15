@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.naman14.powermenu"
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 4
         versionName "2.0"
     }
@@ -20,9 +20,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'eu.chainfire:libsuperuser:1.0.0.+'
-    compile 'com.android.support:design:27.0.2'
-    provided fileTree(dir: 'deps', include: ['*.jar'])
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly fileTree(dir: 'deps', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'eu.chainfire:libsuperuser:1.0.0.+'
+    implementation 'com.android.support:design:27.1.1'
 }
