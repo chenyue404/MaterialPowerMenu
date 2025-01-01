@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
     private void showPowerDialog() {
         FragmentManager fm = getFragmentManager();
         PowerDialog powerDialog = new PowerDialog();
+        powerDialog.setCallback(this::revealFromTop);
         powerDialog.show(fm, "fragment_power");
 
     }

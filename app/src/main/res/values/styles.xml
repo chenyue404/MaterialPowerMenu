@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
 
     <style name="AppThemeDialog" parent="Theme.AppCompat.Light.Dialog">
@@ -36,6 +36,11 @@
         <item name="accentColor">@color/colorAccentDarkTheme</item>
         <item name="iconColor">@android:color/white</item>
         <item name="windowBackground">@color/window_background_dark</item>
+    </style>
+
+    <style name="ThemeTransparent" parent="android:Theme.Translucent.NoTitleBar">
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
+        <item name="statusBarBackground">@android:color/black</item>
     </style>
 
 

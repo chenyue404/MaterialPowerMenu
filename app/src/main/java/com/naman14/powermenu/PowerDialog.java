@@ -124,6 +124,7 @@ public class PowerDialog extends DialogFragment {
                 status_detail.setText("Rebooting...");
 
                 new BackgroundThread(REBOOT_SOFT_REBOOT_CMD).start();
+                getActivity().finish();
 
 
             }
@@ -208,7 +209,10 @@ public class PowerDialog extends DialogFragment {
             selectedView = v;
         }
 
-        ((MainActivity) getActivity()).revealFromTop();
+//        ((MainActivity) getActivity()).revealFromTop();
+        if (mCallback != null) {
+            mCallback.revealFromTop();
+        }
         frame.setVisibility(View.GONE);
         frame2.setVisibility(View.VISIBLE);
     }
@@ -290,5 +294,14 @@ public class PowerDialog extends DialogFragment {
                 .getAttributes().windowAnimations = R.style.DialogAnimation;
     }
 
+    public interface Callback {
+        void revealFromTop();
+    }
+
+    private Callback mCallback;
+
+    public void setCallback(Callback callback) {
+        this.mCallback = callback;
+    }
 
 }

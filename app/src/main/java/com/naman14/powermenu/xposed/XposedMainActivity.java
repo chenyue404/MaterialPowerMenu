@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.view.Display;
 
 import com.naman14.powermenu.CircularRevealView;
+import com.naman14.powermenu.PowerDialog;
 import com.naman14.powermenu.R;
 
 /**
@@ -62,7 +63,9 @@ public class XposedMainActivity extends Activity implements DialogInterface.OnDi
 
     private void showPowerDialog() {
         FragmentManager fm = getFragmentManager();
-        XposedDialog powerDialog = new XposedDialog();
+//        XposedDialog powerDialog = new XposedDialog();
+        PowerDialog powerDialog = new PowerDialog();
+        powerDialog.setCallback(this::revealFromTop);
         powerDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppThemeDialog);
         powerDialog.show(fm, "fragment_power");
 
