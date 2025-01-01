@@ -1,21 +1,27 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 34
+
+    namespace "com.naman14.powermenu"
 
     defaultConfig {
         applicationId "com.naman14.powermenu"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 4
-        versionName "2.0"
+        versionCode 5
+        versionName "2.1"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -24,6 +30,6 @@ dependencies {
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly fileTree(dir: 'deps', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'eu.chainfire:libsuperuser:1.0.0.+'
+    implementation 'eu.chainfire:libsuperuser:1.1.1'
     implementation 'com.android.support:design:27.1.1'
 }

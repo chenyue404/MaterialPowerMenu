@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
 
     private int getPrimaryColor() {
         TypedValue typedValue = new TypedValue();
-        TypedArray a = obtainStyledAttributes(typedValue.data, new int[]{R.attr.colorPrimary});
+        TypedArray a = obtainStyledAttributes(typedValue.data, new int[]{android.support.design.R.attr.colorPrimary});
         int color = a.getColor(0, 0);
         a.recycle();
 

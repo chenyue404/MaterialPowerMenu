@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.ColorInt;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.os.Handler;
-import android.os.Looper;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -39,11 +40,12 @@ public class PowerDialog extends DialogFragment {
             = "am broadcast android.intent.action.ACTION_SHUTDOWN";
     private static final String SHUTDOWN = "reboot -p";
     private static final String REBOOT_CMD = "reboot";
-    private static final String REBOOT_SOFT_REBOOT_CMD = "setprop ctl.restart zygote";
+    private static final String REBOOT_SOFT_REBOOT_CMD = "killall com.android.systemui";
     private static final String REBOOT_RECOVERY_CMD = "reboot recovery";
     private static final String REBOOT_BOOTLOADER_CMD = "reboot bootloader";
+    private static final String REBOOT_QUICK_CMD = "killall system_server";
     private static final String[] REBOOT_SAFE_MODE
-            = new String[]{"setprop persist.sys.safemode 1", REBOOT_SOFT_REBOOT_CMD};
+            = new String[]{"setprop persist.sys.safemode 1", REBOOT_CMD};
 
     private static final int BG_PRIO = android.os.Process.THREAD_PRIORITY_BACKGROUND;
     private static final int RUNNABLE_DELAY_MS = 1000;
@@ -79,20 +81,7 @@ public class PowerDialog extends DialogFragment {
         reboot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int color = Color.parseColor("#3f51b5");
-                final Point p = getLocationInView(revealView, v);
-
-                if (selectedView == v) {
-                    revealView.hide(p.x, p.y, backgroundColor, 0, 330, null);
-                    selectedView = null;
-                } else {
-                    revealView.reveal(p.x / 2, p.y / 2, color, v.getHeight() / 2, 440, null);
-                    selectedView = v;
-                }
-
-                ((MainActivity) getActivity()).revealFromTop();
-                frame.setVisibility(View.GONE);
-                frame2.setVisibility(View.VISIBLE);
+                clickAnimation(v, Color.parseColor("#3f51b5"));
 
                 status.setText("Reboot");
                 status_detail.setText("Rebooting...");
@@ -100,23 +89,23 @@ public class PowerDialog extends DialogFragment {
                 new BackgroundThread(REBOOT_CMD).start();
             }
         });
+        reboot.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                clickAnimation(v, Color.parseColor("#3f51b5"));
+
+                status.setText("Safe Mode");
+                status_detail.setText("Rebooting...");
+
+                new BackgroundThread(REBOOT_SAFE_MODE).start();
+
+                return true;
+            }
+        });
         power.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int color = Color.parseColor("#d32f2f");
-                final Point p = getLocationInView(revealView, v);
-
-                if (selectedView == v) {
-                    revealView.hide(p.x, p.y, backgroundColor, 0, 330, null);
-                    selectedView = null;
-                } else {
-                    revealView.reveal(p.x / 2, p.y / 2, color, v.getHeight() / 2, 440, null);
-                    selectedView = v;
-                }
-
-                ((MainActivity) getActivity()).revealFromTop();
-                frame.setVisibility(View.GONE);
-                frame2.setVisibility(View.VISIBLE);
+                clickAnimation(v, Color.parseColor("#d32f2f"));
 
                 status.setText("Power Off");
                 status_detail.setText("Shutting down...");
@@ -129,20 +118,7 @@ public class PowerDialog extends DialogFragment {
         soft_reboot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int color = Color.parseColor("#e91e63");
-                final Point p = getLocationInView(revealView, v);
-
-                if (selectedView == v) {
-                    revealView.hide(p.x, p.y, backgroundColor, 0, 330, null);
-                    selectedView = null;
-                } else {
-                    revealView.reveal(p.x / 2, p.y / 2, color, v.getHeight() / 2, 440, null);
-                    selectedView = v;
-                }
-
-                ((MainActivity) getActivity()).revealFromTop();
-                frame.setVisibility(View.GONE);
-                frame2.setVisibility(View.VISIBLE);
+                clickAnimation(v, Color.parseColor("#e91e63"));
 
                 status.setText("Soft Reboot");
                 status_detail.setText("Rebooting...");
@@ -155,20 +131,7 @@ public class PowerDialog extends DialogFragment {
         recovery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int color = Color.parseColor("#8bc34a");
-                final Point p = getLocationInView(revealView, v);
-
-                if (selectedView == v) {
-                    revealView.hide(p.x, p.y, backgroundColor, 0, 330, null);
-                    selectedView = null;
-                } else {
-                    revealView.reveal(p.x / 2, p.y / 2, color, v.getHeight() / 2, 440, null);
-                    selectedView = v;
-                }
-
-                ((MainActivity) getActivity()).revealFromTop();
-                frame.setVisibility(View.GONE);
-                frame2.setVisibility(View.VISIBLE);
+                clickAnimation(v, Color.parseColor("#8bc34a"));
 
                 status.setText("Reboot Recovery");
                 status_detail.setText("Rebooting...");
@@ -181,20 +144,7 @@ public class PowerDialog extends DialogFragment {
         bootloader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int color = Color.parseColor("#277b71");
-                final Point p = getLocationInView(revealView, v);
-
-                if (selectedView == v) {
-                    revealView.hide(p.x, p.y, backgroundColor, 0, 330, null);
-                    selectedView = null;
-                } else {
-                    revealView.reveal(p.x / 2, p.y / 2, color, v.getHeight() / 2, 440, null);
-                    selectedView = v;
-                }
-
-                ((MainActivity) getActivity()).revealFromTop();
-                frame.setVisibility(View.GONE);
-                frame2.setVisibility(View.VISIBLE);
+                clickAnimation(v, Color.parseColor("#277b71"));
 
                 status.setText("Reboot Bootloader");
                 status_detail.setText("Rebooting...");
@@ -207,25 +157,11 @@ public class PowerDialog extends DialogFragment {
         safemode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int color = Color.parseColor("#009688");
-                final Point p = getLocationInView(revealView, v);
-
-                if (selectedView == v) {
-                    revealView.hide(p.x, p.y, backgroundColor, 0, 330, null);
-                    selectedView = null;
-                } else {
-                    revealView.reveal(p.x / 2, p.y / 2, color, v.getHeight() / 2, 440, null);
-                    selectedView = v;
-                }
-
-                ((MainActivity) getActivity()).revealFromTop();
-                frame.setVisibility(View.GONE);
-                frame2.setVisibility(View.VISIBLE);
-
-                status.setText("Safe Mode");
+                clickAnimation(v, Color.parseColor("#009688"));
+                status.setText("Quick Reboot");
                 status_detail.setText("Rebooting...");
 
-                new BackgroundThread(REBOOT_SAFE_MODE).start();
+                new BackgroundThread(REBOOT_QUICK_CMD).start();
 
 
             }
@@ -237,7 +173,7 @@ public class PowerDialog extends DialogFragment {
         ((ImageView) view.findViewById(R.id.ipower)).setImageDrawable(drawable1);
 
         TextDrawable drawable2 = TextDrawable.builder()
-                .buildRound("S", Color.parseColor("#009688"));
+                .buildRound("Q", Color.parseColor("#009688"));
         ((ImageView) view.findViewById(R.id.isafe)).setImageDrawable(drawable2);
 
         TextDrawable drawable3 = TextDrawable.builder()
@@ -259,6 +195,22 @@ public class PowerDialog extends DialogFragment {
 
         return view;
 
+    }
+
+    private void clickAnimation(View v, @ColorInt int color) {
+        Point p = getLocationInView(revealView, v);
+
+        if (selectedView == v) {
+            revealView.hide(p.x, p.y, backgroundColor, 0, 330, null);
+            selectedView = null;
+        } else {
+            revealView.reveal(p.x / 2, p.y / 2, color, v.getHeight() / 2, 440, null);
+            selectedView = v;
+        }
+
+        ((MainActivity) getActivity()).revealFromTop();
+        frame.setVisibility(View.GONE);
+        frame2.setVisibility(View.VISIBLE);
     }
 
     private static void setThreadPrio(int prio) {
